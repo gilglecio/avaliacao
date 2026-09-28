@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+// A sessão é iniciada pelo middleware \Slim\Middleware\SessionCookie.
 
 date_default_timezone_set('America/Sao_Paulo');
 
@@ -19,14 +19,18 @@ $env = require APP.DS.'env.php';
 
 define('ENV_DEFAULT', $env['env']);
 
+// Slim 2 converte qualquer erro em exceção; os avisos de depreciação do
+// PHP 8.x nas bibliotecas legadas (Slim 2, php-activerecord) derrubariam a app.
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+
 if (ENV_DEFAULT == 'dev') {
-    error_reporting(E_ALL | E_STRICT);
     ini_set('display_errors', 1);
 }
 
 require VENDOR.DS.'autoload.php';
 require HELPERS.DS.'toolkit.php';
 require HELPERS.DS.'ValidateDate.php';
+require HELPERS.DS.'TwigView.php';
 
 // ini_set("SMTP", config('mail.smtp'));
 // ini_set("smtp_port", config('mail.port'));
@@ -42,9 +46,13 @@ require HELPERS.DS.'ValidateDate.php';
 
 \ActiveRecord\Connection::$datetime_format = 'Y-m-d H:i:s';
 
+// O código legado foi escrito para o MySQL sem modo strict (inserts omitem colunas
+// NOT NULL sem default); o MySQL 8 liga STRICT_TRANS_TABLES e ONLY_FULL_GROUP_BY por padrão.
+\ActiveRecord\ConnectionManager::get_connection()->query("SET SESSION sql_mode = 'NO_ENGINE_SUBSTITUTION'");
+
 $app = new \Slim\Slim(array(
     'templates.path' => VIEWS,
-    'view' => new \Slim\Views\Twig(),
+    'view' => new TwigView(),
     'urladm' => '/admin',
     'urlbase_adm' => config('domain').'admin',
     'env' => $env,
@@ -53,11 +61,11 @@ $app = new \Slim\Slim(array(
 $view = $app->view();
 $view->parserOptions = array(
     'debug' => true,
-    'cache' => ENV_DEFAULT == 'dev' ? CACHE : null,
+    'cache' => ENV_DEFAULT == 'dev' ? CACHE : false,
 );
 
 $view->parserExtensions = array(
-    new \Slim\Views\TwigExtension(),
+    new \Twig\Extension\DebugExtension(),
 );
 
 $app->add(new \Slim\Middleware\SessionCookie());

@@ -88,41 +88,6 @@ class Mail
         }
     }
 
-    public function send_old()
-    {
-        if (ENV_DEFAULT == 'dev') {
-            return false;
-        }
-
-        try {
-            $transport = Swift_SmtpTransport::newInstance(config('mail.smtp'), config('mail.port'), 'ssl');
-            $transport->setUsername(config('mail.email'));
-            $transport->setPassword(config('mail.pass'));
-
-            $mailer = Swift_Mailer::newInstance($transport);
-
-            if (isset($this->input['replacements'])) {
-                $plugin = new Swift_Plugins_DecoratorPlugin($this->input['replacements']);
-                $mailer->registerPlugin($plugin);
-            }
-
-            $from = $this->getFrom();
-
-            $message = Swift_Message::newInstance('Mail')
-                ->setSubject($this->input['subject'])
-                ->setBody($this->input['message'])
-                ->setFrom($from['name'], $from['email'])
-                ->setTo($this->input['to']['email'], $this->input['to']['name'])
-                ;
-
-            $mailer->send($message, $failedRecipients);
-
-            return $failedRecipients;
-        } catch (Exception $e) {
-            return array('error' => $e->getMessage());
-        }
-    }
-
     public static function mailIsValid($email)
     {
         $pattern = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/';

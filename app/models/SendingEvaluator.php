@@ -36,7 +36,7 @@ class SendingEvaluator extends Model
 
     public function before_create()
     {
-        $this->token = crypt($this->evaluation_sending_id.$this->evaluator_id);
+        $this->token = generate_token($this->evaluation_sending_id.$this->evaluator_id);
     }
 
     public static function uniqueness($attributes)

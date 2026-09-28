@@ -63,7 +63,7 @@
 									<ul style="">
 										<li>
 											{% if answer.issue.type == '0-10' %}
-												<b>Nota:</b> {{ answer.answer.getAnswer|replace('.',',') }}
+												<b>Nota:</b> {{ answer.answer.getAnswer|replace({'.': ','}) }}
 											{% else %}
 												{{ answer.answer.getAnswer|raw }}
 											{% endif %} 

@@ -1,4 +1,5 @@
 {% extends 'front/layout.html.twig' %}
+{% import 'admin/blocks.html.twig' as blocks %}
 
 	{% block css %}
 		{{ parent() }}
@@ -100,7 +101,7 @@
 										<li>
 											{% if answer.issue.type == 'scale' %}-{% endif %}
 											{% if answer.issue.type == '0-10' %}
-												<b>Nota:</b> {{ answer.answer.getAnswer|replace('.',',') }}
+												<b>Nota:</b> {{ answer.answer.getAnswer|replace({'.': ','}) }}
 											{% else %}
 											    {{ answer.answer.getAnswer|raw }}
 											{% endif %} 

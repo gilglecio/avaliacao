@@ -19,7 +19,7 @@ class Search
 
     public function __construct($get, \Slim\Slim $app)
     {
-        $this->setTerm($get['term']);
+        $this->setTerm(isset($get['term']) ? $get['term'] : '');
         $this->app = $app;
     }
 

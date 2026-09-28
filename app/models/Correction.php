@@ -117,7 +117,7 @@ class Correction extends Model
                 'answer_id' => $answer_id,
                 'evaluator_id' => $evaluator_id,
                 'note' => $column['note'],
-                'justification' => $column['justification'],
+                'justification' => isset($column['justification']) ? $column['justification'] : null,
             );
 
             $correction = self::create($attributes);

@@ -1,12 +1,12 @@
 <?php
 return [
-    "env" => "dev",
+    "env" => getenv('APP_ENV') ?: "dev",
 	"db" => [
 		"driver" => "mysql",
-		"host" => "avaliacao-db",
-		"username" => "root",
-		"password" => "avalicao",
-		"dbname" => "avaliacao",
+		"host" => getenv('DB_HOST') ?: "avaliacao-db",
+		"username" => getenv('DB_USERNAME') ?: "root",
+		"password" => getenv('DB_PASSWORD') ?: "avaliacao",
+		"dbname" => getenv('DB_DATABASE') ?: "avaliacao",
 		"charset" => "utf8"
     ],
 	"mail" => [
@@ -16,5 +16,5 @@ return [
         "name" => "Gilglécio Santos",
         "pass" => ""
     ],
-	"domain" => "http://localhost:4087/"
+	"domain" => getenv('APP_URL') ?: "http://localhost:4087/"
 ];

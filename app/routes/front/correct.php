@@ -87,14 +87,14 @@ $app->group('/correct/:token', function ($token = null) use ($app)
 
 			$evaluator_id = $evaluator->id;
 
-			if (empty($data['media']) OR ! $evaluator_id) {
+			if (empty($data['media']) OR ! $evaluator_id OR ! isset($data['media'][$evaluator_id])) {
 				$view['media'] = 'NULL';
 				// $app->flash('errors', array('O avaliador foi removido.'));
 			} else {
 				$view['media'] = $data['media'][$evaluator_id];
 			}
 
-			if (empty($data['sum']) OR ! $evaluator_id) {
+			if (empty($data['sum']) OR ! $evaluator_id OR ! isset($data['sum'][$evaluator_id])) {
 				$view['sum'] = 'NULL';
 				// $app->flash('errors', array('O avaliador foi removido.'));
 			} else {
