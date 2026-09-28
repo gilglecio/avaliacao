@@ -1,5 +1,24 @@
 <?php
 
+// Removida no PHP 8, mas ainda chamada pelo Slim 2 (Slim\Http\Util).
+if (!function_exists('get_magic_quotes_gpc')) {
+    function get_magic_quotes_gpc()
+    {
+        return false;
+    }
+}
+
+/**
+ * Gera um token no mesmo formato que crypt() sem salt gerava no PHP 7 ($1$ / MD5).
+ * No PHP 8 o salt é obrigatório.
+ */
+function generate_token($value)
+{
+    $salt = substr(strtr(base64_encode(random_bytes(6)), '+', '.'), 0, 8);
+
+    return crypt((string) $value, '$1$'.$salt.'$');
+}
+
 function config($param)
 {
     $paramns = array(
@@ -34,7 +53,7 @@ function config($param)
                 'pass' => '1gil2glecio3dev',
             ),
 
-            'domain' => 'http://localhost:4087/',
+            'domain' => getenv('APP_URL') ?: 'http://localhost:4087/',
 
             'db' => array(
                 'driver' => 'mysql',

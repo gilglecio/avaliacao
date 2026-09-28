@@ -2,29 +2,24 @@
 
 require_once 'vendor/autoload.php';
 
+use Doctrine\DBAL\DriverManager;
+use Doctrine\Migrations\Configuration\Connection\ExistingConnection;
+use Doctrine\Migrations\Configuration\Migration\PhpFile;
+use Doctrine\Migrations\DependencyFactory;
+
 /**
  * Database params
  */
 $db = require 'app/env.php';
 $db = (object) $db['db'];
 
-/**
- * @var Doctrine\ORM\Tools\Setup
- */
-$config = Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration([__DIR__ . '/app/'], $isDevMode = true);
-
-/**
- * @var Doctrine\ORM\EntityManager
- */
-$entityManager = Doctrine\ORM\EntityManager::create([
+$connection = DriverManager::getConnection([
     'dbname' => $db->dbname,
     'user' => $db->username,
     'password' => $db->password,
     'host' => $db->host,
-    'driver' => 'mysqli',
-], $config);
+    'charset' => $db->charset,
+    'driver' => 'pdo_mysql',
+]);
 
-$platform = $entityManager->getConnection()->getDatabasePlatform();
-$platform->registerDoctrineTypeMapping('enum', 'string');
-
-return Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($entityManager);
+return DependencyFactory::fromConnection(new PhpFile(__DIR__ . '/migrations.php'), new ExistingConnection($connection));

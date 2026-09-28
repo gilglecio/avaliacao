@@ -35,14 +35,14 @@ $app->group('/sending', function () use ($app) {
 			$evaluation = $sending->evaluation_sending->evaluation;
 			$evaluator = User::find_by_id($evaluator_id);
 
-			if (empty($data['media']) OR ! $evaluator_id) {
+			if (empty($data['media']) OR ! $evaluator_id OR ! isset($data['media'][$evaluator_id])) {
 				$view['media'] = 'NULL';
 				// $app->flash('errors', array('O avaliador foi removido.'));
 			} else {
 				$view['media'] = $data['media'][$evaluator_id];
 			}
 
-			if (empty($data['sum']) OR ! $evaluator_id) {
+			if (empty($data['sum']) OR ! $evaluator_id OR ! isset($data['sum'][$evaluator_id])) {
 				$view['sum'] = 'NULL';
 				// $app->flash('errors', array('O avaliador foi removido.'));
 			} else {
@@ -165,14 +165,14 @@ $app->group('/sending', function () use ($app) {
 				'evaluator_id' => $evaluator_id
 			);
 
-			if (empty($data['media']) OR ! $evaluator_id) {
+			if (empty($data['media']) OR ! $evaluator_id OR ! isset($data['media'][$evaluator_id])) {
 				$view['media'] = 'NULL';
 				// $app->flash('errors', array('O avaliador foi removido.'));
 			} else {
 				$view['media'] = number_format($data['media'][$evaluator_id], 2, ',', ' ');
 			}
 
-			if (empty($data['sum']) OR ! $evaluator_id) {
+			if (empty($data['sum']) OR ! $evaluator_id OR ! isset($data['sum'][$evaluator_id])) {
 				$view['sum'] = 'NULL';
 				// $app->flash('errors', array('O avaliador foi removido.'));
 			} else {

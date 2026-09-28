@@ -300,7 +300,7 @@ class Sending extends Model
 
     public function before_create()
     {
-        $this->token = crypt($this->evaluation_sending_id.$this->valued_id);
+        $this->token = generate_token($this->evaluation_sending_id.$this->valued_id);
 
         $find = self::find(array(
             'conditions' => array(

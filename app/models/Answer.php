@@ -112,10 +112,10 @@ class Answer extends Model
     public static function name_valueds($evaluation_sending_id)
     {
         $answers = self::all(array(
+            'select' => 'DISTINCT valued_id',
             'conditions' => array(
                 'evaluation_sending_id =?', $evaluation_sending_id,
             ),
-            'group' => 'valued_id',
         ));
         $names = array();
 

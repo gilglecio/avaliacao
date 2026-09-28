@@ -10,9 +10,7 @@ echo -ne "--------------------------------------------------------\n"
 echo -ne "Rodando as migrações...\n"
 echo -ne "--------------------------------------------------------\n"
 
-./vendor/bin/doctrine-migrations migrations:migrate  --write-sql
-rm migrations.sql
-mv ./*.sql migrations.sql
+./vendor/bin/doctrine-migrations migrations:migrate --write-sql=migrations.sql --no-interaction
 
 echo -ne "--------------------------------------------------------\n"
 echo -ne "Importando estrutura no banco de dados...\n"

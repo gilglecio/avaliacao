@@ -1,4 +1,5 @@
 {% extends 'admin/sending/layout.html.twig' %}
+{% import 'admin/blocks.html.twig' as blocks %}
 
 {% block breadcrumbs %}
 	{{ parent() }}
@@ -54,7 +55,7 @@
 				<tr>
 					<td colspan="3"></td>
 					{% for media in data.media %}
-						{% set value = media|replace('.', ',') %}
+						{% set value = media|replace({'.': ','}) %}
 					    <td><h4 title="Média {{ value }}">{{ value|slice(0, 5) }}</h4></td>
 					{% endfor %}	
 				</tr>

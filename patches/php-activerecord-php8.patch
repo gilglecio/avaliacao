@@ -1,0 +1,70 @@
+diff -ruN a/ActiveRecord.php b/ActiveRecord.php
+--- a/ActiveRecord.php
++++ b/ActiveRecord.php
+@@ -25,7 +25,7 @@
+ require __DIR__.'/lib/Cache.php';
+ 
+ if (!defined('PHP_ACTIVERECORD_AUTOLOAD_DISABLE'))
+-	spl_autoload_register('activerecord_autoload',false,PHP_ACTIVERECORD_AUTOLOAD_PREPEND);
++	spl_autoload_register('activerecord_autoload',true,PHP_ACTIVERECORD_AUTOLOAD_PREPEND);
+ 
+ function activerecord_autoload($class_name)
+ {
+@@ -40,7 +40,7 @@
+ 		foreach ($namespaces as $directory)
+ 			$directories[] = $directory;
+ 
+-		$root .= DIRECTORY_SEPARATOR . implode($directories, DIRECTORY_SEPARATOR);
++		$root .= DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $directories);
+ 	}
+ 
+ 	$file = "$root/$class_name.php";
+diff -ruN a/lib/Column.php b/lib/Column.php
+--- a/lib/Column.php
++++ b/lib/Column.php
+@@ -130,7 +130,7 @@
+ 
+ 		// If adding 0 to a string causes a float conversion,
+ 		// we have a number over PHP_INT_MAX
+-		elseif (is_string($value) && is_float($value + 0))
++		elseif (is_string($value) && is_numeric($value) && is_float($value + 0))
+ 			return (string) $value;
+ 
+ 		// If a float was passed and its greater than PHP_INT_MAX
+diff -ruN a/lib/Connection.php b/lib/Connection.php
+--- a/lib/Connection.php
++++ b/lib/Connection.php
+@@ -487,7 +487,7 @@
+ 		$date = date_create($string);
+ 		$errors = \DateTime::getLastErrors();
+ 
+-		if ($errors['warning_count'] > 0 || $errors['error_count'] > 0)
++		if ($date === false || ($errors && ($errors['warning_count'] > 0 || $errors['error_count'] > 0)))
+ 			return null;
+ 
+ 		$date_class = Config::instance()->get_date_class();
+diff -ruN a/lib/Model.php b/lib/Model.php
+--- a/lib/Model.php
++++ b/lib/Model.php
+@@ -682,6 +682,9 @@
+ 	 */
+ 	private function is_delegated($name, &$delegate)
+ 	{
++		if (!is_array($delegate))
++			return null;
++
+ 		if ($delegate['prefix'] != '')
+ 			$name = substr($name,strlen($delegate['prefix'])+1);
+ 
+diff -ruN a/lib/Singleton.php b/lib/Singleton.php
+--- a/lib/Singleton.php
++++ b/lib/Singleton.php
+@@ -41,7 +41,7 @@
+ 	 *
+ 	 * @return void
+ 	 */
+-	final private function __clone() {}
++	private function __clone() {}
+ 
+ 	/**
+ 	 * Similar to a get_called_class() for a child class to invoke.
